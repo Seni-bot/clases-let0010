@@ -1,0 +1,56 @@
+---
+title: "Segundo ejemplo de reporte"
+format: 
+  html: 
+    code-fold: true #con esto hacemos que se ponga un boton para mostrar el código.
+    code-summary: "Código fuente" #con esto cambiamos el nombre del botón, se cambia para todos por igual.
+editor: visual
+#echo: false, con esto se esconde el código al renderizar
+lang : es
+params:
+  pais: "Francia"
+theme: 
+  dark: darkly
+toc: true #para con esto ponemos un indice
+---
+
+Lo que vamos a hacer es ver cómo importar datos que están en otro lugar de mi proyecto y cómo parametrizar reportes.
+
+## Los datos
+
+Lo primero que haremos será importar los datos con los que vamos a trabajar.
+
+```{r}
+#| message: false
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+desarrollo <- read_csv(here::here("datos/datos-desarrollo.csv"))
+```
+
+## Esperanza de vida en el mundo
+
+La siguiente tabla muestra los datos sobre la esperanza de vida según continente para el año 2020:
+
+```{r}
+desarrollo |> 
+  filter(anio == 2020) |> 
+  group_by(continente) |> 
+  summarise(media = mean(esperanza_vida, na.rm = TRUE), min = min(esperanza_vida, na.rm = TRUE), max = max(esperanza_vida, na.rm = TRUE)) |> 
+  knitr::kable()
+```
+
+## Datos sobre `r params$pais`
+
+En el caso de `r params$pais`, la esperanza de vida ha tenido evolución que se muestra en el siguiente gráfico:
+
+```{r}
+desarrollo |> 
+  filter(pais == params$pais) |> 
+  ggplot(aes(x = anio, y = esperanza_vida)) + 
+  geom_line(size = 2) +
+  scale_y_continuous(limits = c(0,85)) +
+  theme_minimal() +
+  labs(x = "Año", y = "Edad", title = "Datos sobre algo xdxd")
+```
