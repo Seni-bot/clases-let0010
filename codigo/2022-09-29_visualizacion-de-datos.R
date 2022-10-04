@@ -49,4 +49,3 @@ desarrollo |>
   theme_bw() +
   theme(legend.position = "bottom")
 
-      
